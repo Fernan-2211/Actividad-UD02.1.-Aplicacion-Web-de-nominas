@@ -1,24 +1,20 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
+<!-- src/main/webapp/index.jsp -->
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Menú de Opciones - Empleados</title>
+    <meta charset="ISO-8859-1">
+    <title>Menú de Opciones - Empresa</title>
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/estilos.css">
 </head>
 <body>
-  <h1>Menú de Opciones - Empleados</h1>
-
-  <table>
-    <tr>
-      <td><a href="empleados?opcion=nuevo">Crear un Empleado</a></td>
-    </tr>
-    <tr>
-      <td><a href="empleados?opcion=listar">Listar Empleados</a></td>
-    </tr>
-     <tr>
-      <td><a href="empleados?opcion=editar">Editar Empleados</a></td>
-    </tr>
-  </table>
+    <h1>Menú de Opciones - Empresa</h1>
+    <nav>
+        <ul>
+            <li><a href="${pageContext.request.contextPath}/empleados?opcion=listar">Listar Empleados</a></li>
+            <li><a href="${pageContext.request.contextPath}/empleados?opcion=buscarSalario">Buscar Salario</a></li>
+            <li><a href="${pageContext.request.contextPath}/empleados?opcion=buscarEditar">Buscar para Editar</a></li>
+        </ul>
+    </nav>
 </body>
 </html>

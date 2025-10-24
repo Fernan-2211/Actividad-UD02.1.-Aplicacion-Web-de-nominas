@@ -1,43 +1,43 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<!-- src/main/webapp/views/editar.jsp -->
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Editar Empleado</title>
+    <meta charset="ISO-8859-1">
+    <title>Editar Empleado</title>
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/estilos.css">
 </head>
 <body>
-<h1>Editar Empleado</h1>
-
-<form action="empleados" method="post">
-    <input type="hidden" name="opcion" value="editar">
-    <input type="hidden" name="dni" value="${empleado.dni}">
-    <table>
-        <tr>
-            <td>Nombre:</td>
-            <td><input type="text" name="nombre" value="${empleado.nombre}" required></td>
-        </tr>
-        <tr>
-            <td>Sexo:</td>
-            <td>
-                <select name="sexo" required>
-                    <option value="M" <c:if test="${empleado.sexo == 'M'}">selected</c:if>>Masculino</option>
-                    <option value="F" <c:if test="${empleado.sexo == 'F'}">selected</c:if>>Femenino</option>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <td>Categoría:</td>
-            <td><input type="number" name="categoria" value="${empleado.categoria}" required></td>
-        </tr>
-        <tr>
-            <td>Años:</td>
-            <td><input type="number" name="anyos" value="${empleado.anyos}" required></td>
-        </tr>
-    </table>
-    <input type="submit" value="Guardar">
-</form>
-
+    <h1>Editar Empleado</h1>
+    <c:if test="${not empty empleados}">
+        <form action="${pageContext.request.contextPath}/empleados" method="post">
+            <input type="hidden" name="opcion" value="editar">
+            <label for="dni">DNI:</label>
+            <input type="text" id="dni" name="dni" value="${empleados.dni}" readonly>
+            <br>
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" value="${empleados.nombre}" required>
+            <br>
+            <label for="sexo">Sexo (M/F):</label>
+            <select id="sexo" name="sexo" required>
+                <option value="M" <c:if test="${empleados.sexo == 'M'}">selected</c:if>>Masculino</option>
+                <option value="F" <c:if test="${empleados.sexo == 'F'}">selected</c:if>>Femenino</option>
+            </select>
+            <br>
+            <label for="categoria">Categoría (1-10):</label>
+            <input type="number" id="categoria" name="categoria" value="${empleados.categoria}" min="1" max="10" required>
+            <br>
+            <label for="anyos">Años Trabajados:</label>
+            <input type="number" id="anyos" name="anyos" value="${empleados.anyos}" min="0" required>
+            <br><br>
+            <input type="submit" value="Guardar Cambios">
+            <input type="button" value="Volver" onclick="window.location.href='${pageContext.request.contextPath}/empleados?opcion=buscarEditar'">
+        </form>
+    </c:if>
+    <c:if test="${empty empleados}">
+        <p class="error">Empleado no encontrado.</p>
+        <input type="button" value="Volver" onclick="window.location.href='${pageContext.request.contextPath}/empleados?opcion=buscarEditar'">
+    </c:if>
 </body>
 </html>
