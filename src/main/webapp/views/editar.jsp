@@ -21,9 +21,20 @@
             <br>
             <label for="sexo">Sexo (M/F):</label>
             <select id="sexo" name="sexo" required>
-                <option value="M" <c:if test="${empleados.sexo == 'M'}">selected</c:if>>Masculino</option>
-                <option value="F" <c:if test="${empleados.sexo == 'F'}">selected</c:if>>Femenino</option>
-            </select>
+    <c:choose>
+    <c:when test="${empleados.sexo == 1}">
+        <option value="M" selected>Masculino</option>
+        <option value="F">Femenino</option>
+    </c:when>
+    <c:otherwise>
+        <option value="M">Masculino</option>
+        <option value="F" selected>Femenino</option>
+    </c:otherwise>
+</c:choose>
+    
+</select>
+            
+            
             <br>
             <label for="categoria">Categoría (1-10):</label>
             <input type="number" id="categoria" name="categoria" value="${empleados.categoria}" min="1" max="10" required>

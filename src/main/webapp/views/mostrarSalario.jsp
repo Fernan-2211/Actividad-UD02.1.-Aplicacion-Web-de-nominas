@@ -10,30 +10,22 @@
 </head>
 <body>
     <h1>Nómina del Empleado</h1>
-    <c:if test="${not empty empleado}">
+    <c:if test="${not empty error}">
+        <p class="error">${error}</p>
+        <button onclick="history.back()">Volver</button>
+    </c:if>
+
+    <c:if test="${empty error && not empty empleado}">
         <table>
-            <tr>
-                <th>DNI</th>
-                <th>Nombre</th>
-                <th>Sexo</th>
-                <th>Categoría</th>
-                <th>Años Trabajados</th>
-                <th>Sueldo</th>
-            </tr>
-            <tr>
-                <td>${empleado.dni}</td>
-                <td>${empleado.nombre}</td>
-                <td>${empleado.sexo}</td>
-                <td>${empleado.categoria}</td>
-                <td>${empleado.anyos}</td>
-                <td>${sueldo}</td>
-            </tr>
+            <tr><th>DNI</th><td>${empleado.dni}</td></tr>
+            <tr><th>Nombre</th><td>${empleado.nombre}</td></tr>
+            <tr><th>Sexo</th><td>${empleado.sexo}</td></tr>
+            <tr><th>Categoría</th><td>${empleado.categoria}</td></tr>
+            <tr><th>Años</th><td>${empleado.anyos}</td></tr>
+            <tr><th><strong>Sueldo</strong></th><td><strong>${sueldo}</strong></td></tr>
         </table>
+        <br>
+        <button onclick="window.location.href='${pageContext.request.contextPath}/empleados?opcion=buscarSalario'">Volver</button>
     </c:if>
-    <c:if test="${empty empleado}">
-        <p class="error">Empleado no encontrado.</p>
-    </c:if>
-    <br>
-    <input type="button" value="Volver" onclick="window.location.href='${pageContext.request.contextPath}/empleados?opcion=buscarSalario'">
 </body>
 </html>

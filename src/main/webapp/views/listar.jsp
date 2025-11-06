@@ -34,6 +34,10 @@
 <body>
   <h1>Listado de Empleados</h1>
 
+  <c:if test="${empty lista}"> <!-- CAMBIO: Mensaje si vacío -->
+    <p class="error">No hay empleados en la base de datos.</p>
+  </c:if>
+
   <table>
     <tr>
       <th>DNI</th>
@@ -57,5 +61,6 @@
       </tr>
     </c:forEach>
   </table>
+  <input type="button" value="Volver" onclick="window.location.href='${pageContext.request.contextPath}/index.jsp'"> <!-- CAMBIO: Agregado -->
 </body>
 </html>
