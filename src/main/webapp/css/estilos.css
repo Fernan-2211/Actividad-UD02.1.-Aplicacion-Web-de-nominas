@@ -1,0 +1,192 @@
+/* 🎨 estilos.css — Estilo general moderno para todas las vistas */
+
+body {
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background: #f5f7fa;
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+
+/* 🔹 Títulos */
+h1 {
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 40px;
+  font-size: 2rem;
+  letter-spacing: 0.5px;
+}
+
+/* 🔹 Navegación */
+nav {
+  text-align: center;
+  margin-top: 30px;
+}
+
+nav ul {
+  list-style: none;
+  padding: 0;
+}
+
+nav li {
+  display: inline-block;
+  margin: 10px 15px;
+}
+
+nav a {
+  text-decoration: none;
+  color: #ffffff;
+  background-color: #007bff;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background 0.3s ease;
+}
+
+nav a:hover {
+  background-color: #0056b3;
+}
+
+/* 🔹 Tablas (Listar, ListarEditar, MostrarSalario, etc.) */
+table {
+  border-collapse: collapse;
+  width: 85%;
+  margin: 40px auto;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+th {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+  padding: 12px 15px;
+}
+
+th:last-child {
+  border-right: none;
+}
+
+td {
+  padding: 12px 15px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+tr:nth-child(even) {
+  background-color: #f9fbff;
+}
+
+tr:hover {
+  background-color: #eef4ff;
+  transition: background 0.3s ease;
+}
+
+a {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* 🔹 Formularios (Editar, Buscar, etc.) */
+form {
+  background: #fff;
+  width: 450px;
+  margin: 40px auto;
+  padding: 30px 40px;
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+label {
+  display: block;
+  margin-top: 15px;
+  color: #333;
+  font-weight: bold;
+}
+
+input[type="text"],
+input[type="number"],
+select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+  font-size: 1rem;
+}
+
+/* 🔹 Botones generales */
+input[type="submit"],
+input[type="button"],
+button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  margin-top: 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.3s ease;
+}
+
+input[type="submit"]:hover,
+input[type="button"]:hover,
+button:hover {
+  background-color: #0056b3;
+}
+
+/* 🔹 Botón volver centrado (para todas las vistas) */
+.volver-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 25px;
+}
+
+.volver-container input[type="button"],
+.volver-container button {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: #fff;
+  padding: 10px 25px;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.volver-container input[type="button"]:hover,
+.volver-container button:hover {
+  background: #004a99;
+}
+
+/* 🟢 Mensajes */
+.success {
+  color: #28a745;
+  text-align: center;
+  font-weight: bold;
+}
+
+.error {
+  color: #e74c3c;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* 🔹 Footer opcional */
+footer {
+  text-align: center;
+  padding: 20px;
+  color: #777;
+  font-size: 0.9rem;
+}

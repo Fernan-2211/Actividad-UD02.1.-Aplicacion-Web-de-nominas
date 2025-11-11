@@ -48,7 +48,7 @@
     </c:if>
     <c:if test="${empty empleados}">
         <p class="error">Empleado no encontrado.</p>
-        <input type="button" value="Volver" onclick="window.location.href='${pageContext.request.contextPath}/empleados?opcion=buscarEditar'">
+        <input type="button" value="Volver" onclick="window.location.href='${pageContext.request.contextPath}/empleados?opcion=buscarEditar'">>
     </c:if>
 </body>
 </html>

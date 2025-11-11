@@ -15,9 +15,6 @@
         <select name="criterio" id="criterio">
             <option value="dni">DNI</option>
             <option value="nombre">Nombre</option>
-            <option value="sexo">Sexo (M/F)</option> <!-- CAMBIO: Agregado -->
-            <option value="categoria">Categoría</option> <!-- CAMBIO: Agregado -->
-            <option value="anyos">Años Trabajados</option> <!-- CAMBIO: Agregado -->
         </select>
         <br><br>
         <label for="valor">Valor:</label>

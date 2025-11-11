@@ -25,7 +25,11 @@
             <tr><th><strong>Sueldo</strong></th><td><strong>${sueldo}</strong></td></tr>
         </table>
         <br>
-        <button onclick="window.location.href='${pageContext.request.contextPath}/empleados?opcion=buscarSalario'">Volver</button>
+        <div class="volver-container">
+		<input type="button" value="Volver"
+			onclick="window.location.href='${pageContext.request.contextPath}/empleados?opcion=buscarSalario'">
+		</div>
+
     </c:if>
 </body>
 </html>

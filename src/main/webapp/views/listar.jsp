@@ -6,30 +6,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Listar Empleados</title>
-<style>
-  table {
-    border-collapse: collapse;
-    width: 70%;
-    margin: 20px auto;
-    font-family: Arial, sans-serif;
-  }
-  th, td {
-    border: 1px solid #999;
-    padding: 8px 12px;
-    text-align: center;
-  }
-  th {
-    background-color: #eee;
-  }
-  h1 {
-    text-align: center;
-    font-family: Arial, sans-serif;
-  }
-  a {
-    text-decoration: none;
-    color: blue;
-  }
-</style>
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/estilos.css">
 </head>
 <body>
   <h1>Listado de Empleados</h1>
@@ -61,6 +38,9 @@
       </tr>
     </c:forEach>
   </table>
-  <input type="button" value="Volver" onclick="window.location.href='${pageContext.request.contextPath}/index.jsp'"> <!-- CAMBIO: Agregado -->
+	<div class="volver-container">
+		<input type="button" value="Volver"
+			onclick="window.location.href='${pageContext.request.contextPath}/index.jsp'">
+	</div>
 </body>
 </html>

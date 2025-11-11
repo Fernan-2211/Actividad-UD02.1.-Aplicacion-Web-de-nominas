@@ -1,4 +1,5 @@
 package com.empresa.dao;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,27 +8,48 @@ import java.util.ArrayList;
 import java.util.List;
 import com.empresa.conexion.Conexion;
 import com.empresa.empleado.Empleado;
-import com.empresa.nomina.Nomina;
+import com.empresa.strategy.CalculoSalarioBase;
+import com.empresa.strategy.ContextoCalculoSalario;
+
 /**
- * Clase que gestiona las operaciones con la base de datos para empleados y nóminas.
+ * Clase DAO que gestiona todas las operaciones de base de datos relacionadas con empleados y nóminas.
+ * 
+ * Se encarga de:
+ * - Listar empleados
+ * - Obtener un empleado por DNI
+ * - Calcular o recuperar salarios
+ * - Editar empleados y actualizar nóminas
+ * - Buscar empleados por distintos criterios
+ * 
+ * Autor: Fernando
+ * Versión: 1.0
  */
-public class empresaDAO {
+public class EmpresaDAO {
+
+    /** Conexión activa con la base de datos */
     private Connection connection;
+
+    /** Statement para ejecutar consultas */
     private PreparedStatement statement;
+
+    /** Estado de la operación (true si tuvo éxito) */
     private boolean estadoOperacion;
+
     /**
-     * Obtiene la lista de todos los empleados en la base de datos.
-     * @return Lista de empleados.
-     * @throws SQLException Si ocurre un error en la consulta.
+     * Obtiene todos los empleados de la base de datos ordenados por nombre.
+     * @return Lista de objetos Empleado
+     * @throws SQLException Si ocurre algún error en la consulta
      */
     public List<Empleado> obtenerEmpleados() throws SQLException {
         ResultSet resultSet = null;
         List<Empleado> listaEmpleados = new ArrayList<>();
-        String sql = "SELECT * FROM empleados ORDER BY nombre"; // Orden por nombre para mejor UX
+        String sql = "SELECT * FROM empleados ORDER BY nombre";
         connection = obtenerConexion();
+
         try {
             statement = connection.prepareStatement(sql);
             resultSet = statement.executeQuery();
+
             while (resultSet.next()) {
                 Empleado emp = new Empleado();
                 emp.setDni(resultSet.getString("dni"));
@@ -47,21 +69,24 @@ public class empresaDAO {
         }
         return listaEmpleados;
     }
+
     /**
      * Obtiene un empleado por su DNI.
-     * @param dni DNI del empleado.
-     * @return Objeto Empleado o un objeto vacío si no se encuentra.
-     * @throws SQLException Si ocurre un error en la consulta.
+     * @param dni DNI del empleado
+     * @return Empleado encontrado o vacío si no existe
+     * @throws SQLException Si ocurre algún error de consulta
      */
     public Empleado obtenerEmpleado(String dni) throws SQLException {
         ResultSet resultSet = null;
         Empleado emp = new Empleado();
         String sql = "SELECT * FROM empleados WHERE dni = ?";
         connection = obtenerConexion();
+
         try {
             statement = connection.prepareStatement(sql);
             statement.setString(1, dni);
             resultSet = statement.executeQuery();
+
             if (resultSet.next()) {
                 emp.setDni(resultSet.getString("dni"));
                 emp.setNombre(resultSet.getString("nombre"));
@@ -79,15 +104,14 @@ public class empresaDAO {
         }
         return emp;
     }
-  
-   
+
     /**
-     * Obtiene el sueldo del empleado desde la tabla nominas.
-     * Si no existe, lo calcula usando la clase Nomina y lo inserta en la BD.
-     */
-    /**
-     * Obtiene el sueldo del empleado desde la tabla nominas.
-     * Si no existe, lo calcula usando la clase Nomina y lo inserta en la BD.
+     * Obtiene el salario de un empleado.
+     * Si ya existe en la tabla nominas, lo recupera.
+     * Si no existe, lo calcula usando la estrategia CalculoSalarioBase y lo inserta en la base de datos.
+     * @param dni DNI del empleado
+     * @return Sueldo calculado o recuperado
+     * @throws SQLException Si ocurre un error en la conexión o consulta
      */
     public int obtenerSalario(String dni) throws SQLException {
         int sueldo = 0;
@@ -97,26 +121,27 @@ public class empresaDAO {
 
         try {
             conn = obtenerConexion();
-            System.out.println("Conexión obtenida en obtenerSalario para DNI: " + dni); // Log para depurar
+            System.out.println("Conexión obtenida en obtenerSalario para DNI: " + dni);
 
-            // 1. Buscar en la tabla nominas
+            // 1. Buscar en nominas
             String sql = "SELECT sueldo FROM nominas WHERE dni = ?";
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, dni);
             rs = stmt.executeQuery();
 
             if (rs.next()) {
+                // Ya existe el sueldo en la base de datos
                 sueldo = rs.getInt("sueldo");
                 System.out.println("Sueldo encontrado en BD: " + sueldo);
             } else {
-                // 2. Si no existe, obtener empleado y calcular sueldo
+                // 2. Si no existe, obtener empleado y calcular usando Strategy
                 Empleado emp = obtenerEmpleado(dni);
                 if (emp.getDni() != null && !emp.getDni().isEmpty()) {
-                    Nomina nomina = new Nomina();
-                    sueldo = nomina.sueldo(emp);
+                    ContextoCalculoSalario contexto = new ContextoCalculoSalario(new CalculoSalarioBase());
+                    sueldo = (int) contexto.calcularSalario(emp);
                     System.out.println("Sueldo calculado: " + sueldo);
 
-                    // 3. Insertar en la tabla nominas (usa try-with-resources para statement separado)
+                    // 3. Insertar en la tabla nominas
                     sql = "INSERT INTO nominas (dni, sueldo) VALUES (?, ?)";
                     try (PreparedStatement insertStmt = conn.prepareStatement(sql)) {
                         insertStmt.setString(1, dni);
@@ -132,26 +157,27 @@ public class empresaDAO {
             System.err.println("Error en obtenerSalario: " + e.getMessage());
             throw e;
         } finally {
-            // Cierre seguro de recursos
             if (rs != null) try { rs.close(); } catch (SQLException ignored) {}
             if (stmt != null) try { stmt.close(); } catch (SQLException ignored) {}
             if (conn != null) try { conn.close(); } catch (SQLException ignored) {}
         }
         return sueldo;
-}
-    
+    }
+
     /**
-     * Edita los datos de un empleado y actualiza su sueldo en la tabla nominas.
-     * @param empleado Empleado con los datos actualizados.
-     * @return true si la edición fue exitosa, false en caso contrario.
-     * @throws SQLException Si ocurre un error en la operación.
+     * Edita los datos de un empleado y actualiza su sueldo usando Strategy.
+     * @param empleado Empleado con los datos modificados
+     * @return true si se editó correctamente, false si hubo algún fallo
+     * @throws SQLException Si ocurre un error en la operación
      */
     public boolean editar(Empleado empleado) throws SQLException {
         estadoOperacion = false;
         connection = obtenerConexion();
+
         try {
             connection.setAutoCommit(false);
-            // Actualizar datos en la tabla empleados
+
+            // Actualizar tabla empleados
             String sql = "UPDATE empleados SET nombre = ?, sexo = ?, categoria = ?, anyos = ? WHERE dni = ?";
             statement = connection.prepareStatement(sql);
             statement.setString(1, empleado.getNombre());
@@ -161,11 +187,12 @@ public class empresaDAO {
             statement.setString(5, empleado.getDni());
             int filasActualizadas = statement.executeUpdate();
             estadoOperacion = filasActualizadas > 0;
-            System.out.println("Filas actualizadas en empleados: " + filasActualizadas + " para DNI: " + empleado.getDni());
-            // Recalcular sueldo usando la clase Nomina
-            Nomina nomina = new Nomina();
-            double sueldo = nomina.sueldo(empleado);
-            // Actualizar o insertar sueldo en la tabla nominas
+
+            // Recalcular sueldo con Strategy
+            ContextoCalculoSalario contexto = new ContextoCalculoSalario(new CalculoSalarioBase());
+            double sueldo = contexto.calcularSalario(empleado);
+
+            // Insertar o actualizar en nominas
             sql = "INSERT INTO nominas (dni, sueldo) VALUES (?, ?) ON DUPLICATE KEY UPDATE sueldo = ?";
             statement = connection.prepareStatement(sql);
             statement.setString(1, empleado.getDni());
@@ -173,9 +200,8 @@ public class empresaDAO {
             statement.setDouble(3, sueldo);
             filasActualizadas = statement.executeUpdate();
             estadoOperacion = estadoOperacion && filasActualizadas > 0;
-            System.out.println("Filas actualizadas en nominas: " + filasActualizadas + " para DNI: " + empleado.getDni());
+
             connection.commit();
-            System.out.println("Commit ejecutado para DNI: " + empleado.getDni());
         } catch (SQLException e) {
             if (connection != null) {
                 connection.rollback();
@@ -189,18 +215,20 @@ public class empresaDAO {
         }
         return estadoOperacion;
     }
+
     /**
-     * Busca empleados según un criterio y valor especificados.
-     * @param criterio Campo por el que buscar (dni, nombre, sexo, categoria, anyos).
-     * @param valor Valor a buscar.
-     * @return Lista de empleados que coinciden con el criterio.
-     * @throws SQLException Si ocurre un error en la consulta.
+     * Busca empleados según un criterio y valor.
+     * @param criterio Campo a filtrar (dni, nombre, sexo, categoria, anyos)
+     * @param valor Valor a buscar
+     * @return Lista de empleados que cumplen el criterio
+     * @throws SQLException Si ocurre un error en la consulta
      */
     public List<Empleado> buscarEmpleados(String criterio, String valor) throws SQLException {
         ResultSet resultSet = null;
         List<Empleado> listaEmpleados = new ArrayList<>();
         String sql = null;
         connection = obtenerConexion();
+
         try {
             switch (criterio.toLowerCase()) {
                 case "dni":
@@ -223,9 +251,11 @@ public class empresaDAO {
                 default:
                     throw new SQLException("Criterio de búsqueda no válido");
             }
+
             statement = connection.prepareStatement(sql);
             statement.setString(1, valor);
             resultSet = statement.executeQuery();
+
             while (resultSet.next()) {
                 Empleado emp = new Empleado();
                 emp.setDni(resultSet.getString("dni"));
@@ -245,10 +275,11 @@ public class empresaDAO {
         }
         return listaEmpleados;
     }
+
     /**
-     * Obtiene la conexión a la base de datos desde el pool de conexiones.
-     * @return Conexión a la base de datos.
-     * @throws SQLException Si no se puede establecer la conexión.
+     * Obtiene la conexión a la base de datos desde la clase Conexion.
+     * @return Conexión lista para usar
+     * @throws SQLException Si no se puede establecer la conexión
      */
     private Connection obtenerConexion() throws SQLException {
         return Conexion.getConnection();
